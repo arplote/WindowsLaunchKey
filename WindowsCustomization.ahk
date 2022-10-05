@@ -21,6 +21,83 @@ Return
 ;  Send, {CapsLock}
 ;Return
 
+;---------------------- MOVE AND RESIZE WINDOWS WITH RAlt KEY + MOUSE ----------------------
+
+RAlt & LButton::
+  CoordMode, Mouse, Screen ; Fixed to move background windows properly
+
+  MouseGetPos, , , id ; get ID of window under cursor
+  WinGetTitle, title, ahk_id %id% ; get title of window under cursor
+  SetTitleMatchMode 3 ; match window that has the exact name as %title%
+  WinGetPos, win_x, win_y, win_width, win_height, %title% ; get upper left corner of window
+  MouseGetPos, current_x, current_y, window_id ; get cursor position on the screen (not relative to window)
+  cur_win_x := current_x - win_x ; calculate relative cursor position
+  cur_win_y := current_y - win_y
+  WinGet, window_minmax, MinMax, ahk_id %window_id%
+
+  if window_minmax <> 0  ; If the window is maximized -> restore it
+  {
+    WinRestore, %title%
+  }
+
+  CoordMode, Mouse, Screen
+  SetWinDelay, 0
+
+  if GetKeyState("RCtrl", "P") ; If Right Control key is pressed -> RESIZE THE WINDOWS
+  {
+    loop {
+      if !GetKeyState("LButton", "P") ; exit the loop if the left mouse button was released
+      {
+        break
+      }
+      MouseGetPos, cur_x, cur_y ; resize the window based on cursor position
+      WinMove, ahk_id %window_id%,,,, (win_width + cur_x - current_x), (win_height + cur_y - current_y)
+    }
+  }
+  else ; If Right Control key is not pressed -> MOVE THE WINDOW
+  {
+    loop {
+      if !GetKeyState("LButton", "P") ; exit the loop if the left mouse button was released
+      {
+        break
+      }
+      if GetKeyState("p", "P")
+      {
+        Notify("AutoHotKey",cur_y,1,"GC_=yellow")
+      }
+
+      MouseGetPos, cur_x, cur_y ; move the window based on cursor position
+      WinMove, ahk_id %window_id%,, (cur_x - cur_win_x), (cur_y - cur_win_y)
+      if cur_y = 0 ; depends on the size of the second screen... Should improve this check...
+      {
+        if (cur_x * (win_x+9)) >= 0 ; 8 pixel shift when window is maximized
+        {
+          WinMove, ahk_id %window_id%,, win_x, win_y
+        } else
+        {
+          if cur_x >= 0
+          {
+            if Abs(win_x) > Abs(win_width) {
+              WinMove, ahk_id %window_id%,, Abs(win_x) - Abs(win_width), win_y
+            } else {
+              WinMove, ahk_id %window_id%,, Abs(win_x), win_y
+            }
+          } else {
+            if Abs(win_x) < Abs(win_width)
+            {
+              WinMove, ahk_id %window_id%,, -(Abs(win_x) + win_width), win_y
+            } else {
+              WinMove, ahk_id %window_id%,, -(win_width), win_y
+            }
+          }
+        }
+        WinMaximize, %title%
+        return
+      }
+    }
+  }
+return
+
 
 ;---------------------- REPLACE TEXT ----------------------
 
