@@ -97,6 +97,11 @@ When the shortcut is of the form "* + a", it means that you should **press the l
 *To open bash terminal in your Documents folder, update line 113 of the script accordingly*
 
 
+### Move windows
+
+You can move windows clicking anywhere on the windows when holding the Alt Gr key
+
+
 ### Special shortcuts
 
 Finally, it is possible to "autocomplete" some predefined sentences you are brought to type frequently. Typing the shortcuts below will automatically type the text on the right.
