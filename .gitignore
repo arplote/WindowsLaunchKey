@@ -1,0 +1,7 @@
+# Personal data: never committed (the template is Perso.example.ahk)
+Perso.ahk
+
+# Files created by the script at runtime
+*.log
+*.ini
+WindowsCustomization_AudioMisesDeCote.txt
